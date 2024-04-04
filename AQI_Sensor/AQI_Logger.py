@@ -21,7 +21,9 @@ def init_db(db_name="air_quality.db"):
 
 def log_reading(aq_data):    
     # URL to the PHP script that processes the form submission
-    url = 'https://marcushurt.dev/AQI.html'
+    url = 'https://marcushurt.dev/submit_AQI_data.php'
+
+    print(aq_data)
     
     # Data to be submitted
     form_data = {

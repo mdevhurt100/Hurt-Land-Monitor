@@ -1,12 +1,14 @@
 import requests
 
 # The URL where the form submits data
-url = 'https://marcushurt.dev/db.php'
+url = 'https://marcushurt.dev/submit_AQI_data.php'
 
 # The data you wish to submit
 data = {
-    'name': 'test',
-    'email': 'test@test.com'
+    'time': "2024-10-10",
+    'pm25': 1,
+    'pm10': 1,
+    'pm100': 1
 }
 
 # Perform the HTTP POST request
