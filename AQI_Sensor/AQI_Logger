@@ -4,6 +4,7 @@ import time
 from adafruit_pm25.i2c import PM25_I2C
 import board
 import busio
+import requests
 
 # Initialize the I2C connection to the sensor
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -18,13 +19,26 @@ def init_db(db_name="air_quality.db"):
     conn.commit()
     conn.close()
 
-# Function to log a reading to the database
-def log_reading(db_name, reading):
-    conn = sqlite3.connect(db_name)
-    c = conn.cursor()
-    c.execute("INSERT INTO readings VALUES (?, ?, ?, ?)", reading)
-    conn.commit()
-    conn.close()
+def log_reading(aq_data):    
+    # URL to the PHP script that processes the form submission
+    url = 'https://marcushurt.dev/submit_data.php'
+    
+    # Data to be submitted
+    form_data = {
+        'time': aq_data[0],
+        'pm25': aq_data[1],
+        'pm10': aq_data[2],
+        'pm100': aq_data[3]
+    }
+    
+    # Perform the HTTP POST request
+    response = requests.post(url, data=form_data)
+    
+    # Check if the submission was successful
+    if response.status_code == 200:
+        print("Reading logged successfully via form.")
+    else:
+        print(f"Failed to log reading via form. Status code: {response.status_code}")
 
 # Initialize the database
 init_db()
@@ -36,7 +50,7 @@ while True:
         aq_data = pm25.read()
         # Prepare the data for logging
         current_time = time.strftime('%Y-%m-%d %H:%M:%S')
-        reading = (current_time, aq_data["pm10 standard"], aq_data["pm25 standard"], aq_data["pm100 standard"])
+        reading = (current_time, aq_data["pm25 standard"], aq_data["pm10 standard"], aq_data["pm100 standard"])
         # Log the reading
         log_reading("air_quality.db", reading)
         # Sleep for a minute
