@@ -25,10 +25,10 @@ def log_reading(aq_data):
     
     # Data to be submitted
     form_data = {
-        'time': aq_data[0],
-        'pm25': aq_data[1],
-        'pm10': aq_data[2],
-        'pm100': aq_data[3]
+        'time': aq_data['time'],
+        'pm25': aq_data['pm25'],
+        'pm10': aq_data['pm10'],
+        'pm100': aq_data['pm100']
     }
     
     # Perform the HTTP POST request
@@ -50,9 +50,12 @@ while True:
         aq_data = pm25.read()
         # Prepare the data for logging
         current_time = time.strftime('%Y-%m-%d %H:%M:%S')
-        reading = (current_time, aq_data["pm25 standard"], aq_data["pm10 standard"], aq_data["pm100 standard"])
+        reading = {'time' : current_time, 
+                   'pm25' : aq_data["pm25 standard"], 
+                   'pm10' : aq_data["pm10 standard"],
+                   'pm100' : aq_data["pm100 standard"]}
         # Log the reading
-        log_reading("air_quality.db", reading)
+        log_reading(reading)
         # Sleep for a minute
         time.sleep(60)
     except KeyboardInterrupt:
